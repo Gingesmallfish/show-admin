@@ -1,9 +1,10 @@
 <script setup>
 import { ref, reactive } from 'vue'
-import { login } from "@/api/manager";
-import { ElNotification } from 'element-plus'
+import { login, getinfo } from "@/api/manager";
 import { useRouter } from "vue-router";
+import { ElNotification } from 'element-plus'
 import { useCookies } from '@vueuse/integrations/useCookies'
+import {Lock, User} from "@element-plus/icons-vue";
 
 const router = useRouter();
 
@@ -37,7 +38,7 @@ const onSubmit = () => {
     }
     login(form.username, form.password)
       .then(res => {
-        console.log(res.data.data);
+        console.log(res);
 
         // 提示成功 x
         ElNotification({
@@ -45,18 +46,18 @@ const onSubmit = () => {
           type: 'success',
           duration: 3000
         })
-        // 存储token和用户信息 x
+
+        // 存储token和用户信息 √
         const cookie = useCookies();
-        cookie.set("admin-token",res.data.data)
+        cookie.set("admin-token",res.token)
+
+        // 获取用户相关信息
+        getinfo().then(resonw => {
+          console.log(resonw)
+        })
+
         // 跳转到后台首页 √
         router.push("/")
-      })
-      .catch(err => {
-        ElNotification({
-          message: err.response.data.msg || "请求失败",
-          type: 'error',
-          duration: 3000
-        })
       })
   })
 }
