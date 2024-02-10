@@ -3,7 +3,9 @@
 </script>
 
 <template>
-  $END$
+  <div>
+    后台首页
+  </div>
 </template>
 
 <style scoped>
