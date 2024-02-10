@@ -4,7 +4,6 @@ import { login, getinfo } from "@/api/manager";
 import { useRouter } from "vue-router";
 import { ElNotification } from 'element-plus'
 import { useCookies } from '@vueuse/integrations/useCookies'
-import {Lock, User} from "@element-plus/icons-vue";
 
 const router = useRouter();
 
