@@ -1,5 +1,6 @@
 <script setup>
-import { reactive } from 'vue'
+import { ref, reactive } from 'vue'
+import { login } from "@/api/manager";
 
 // do not use same name with ref
 const form = reactive({
@@ -7,8 +8,36 @@ const form = reactive({
   password: ""
 })
 
+const rules = {
+  username: [
+    {
+      required: true,
+      message: '用户名不能为空',
+      trigger: 'blur'
+    },
+  ],
+  password: [
+    {
+      required: true,
+      message: '密码不能为空',
+      trigger: 'blur'
+    },
+  ]
+}
+const formRef = ref(null)
 const onSubmit = () => {
-  console.log('submit!')
+  formRef.value.validate((valid) => {
+    if (!valid) {
+      return false
+    }
+    login(form.username,form.password)
+        .then(res => {
+          console.log(res)
+        })
+        .catch(err=> {
+          console.log(err.response.data.msg)
+        })
+  })
 }
 </script>
 
@@ -27,18 +56,22 @@ const onSubmit = () => {
         <span>账号密码登录</span>
         <span class="line"></span>
       </div>
-      <el-form :model="form" class="w-[250px]">
-        <el-form-item>
+      <el-form ref="formRef" :rules="rules" :model="form" class="w-[250px]">
+        <el-form-item prop="username">
           <el-input v-model="form.username" placeholder="请输入用户名">
             <template #prefix>
-              <el-icon><User /></el-icon>
+              <el-icon>
+                <User />
+              </el-icon>
             </template>
           </el-input>
         </el-form-item>
-        <el-form-item>
-          <el-input v-model="form.password" placeholder="请输入密码">
+        <el-form-item prop="password">
+          <el-input v-model="form.password" type="password"  placeholder="请输入密码" show-password>
             <template #prefix>
-              <el-icon><Lock /></el-icon>
+              <el-icon>
+                <Lock />
+              </el-icon>
             </template>
           </el-input>
         </el-form-item>
@@ -51,11 +84,12 @@ const onSubmit = () => {
 </template>
 
 <style scoped>
-.login-container{
+.login-container {
   @apply min-h-screen bg-indigo-500;
 }
 
-.login-container .left, .login-container .right{
+.login-container .left,
+.login-container .right {
   @apply flex items-center justify-center;
 }
 
@@ -63,11 +97,11 @@ const onSubmit = () => {
   @apply bg-light-50 flex-col;
 }
 
-.left > div > div:first-child {
+.left>div>div:first-child {
   @apply font-bold text-5xl text-light-50 mb-4;
 }
 
-.left > div > div:last-child {
+.left>div>div:last-child {
   @apply text-gray-300 text-sm
 }
 
@@ -75,11 +109,10 @@ const onSubmit = () => {
   @apply font-bold text-3xl text-gray-800
 }
 
-.right > div {
+.right>div {
   @apply flex items-center justify-center my-5 text-gray-300 space-x-2
 }
 
 .right .line {
   @apply h-[1px] w-16 bg-gray-200
-}
-</style>
+}</style>
