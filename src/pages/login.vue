@@ -1,6 +1,11 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { login } from "@/api/manager";
+import { ElNotification } from 'element-plus'
+import { useRouter } from "vue-router";
+import { useCookies } from '@vueuse/integrations/useCookies'
+
+const router = useRouter();
 
 // do not use same name with ref
 const form = reactive({
@@ -30,13 +35,29 @@ const onSubmit = () => {
     if (!valid) {
       return false
     }
-    login(form.username,form.password)
-        .then(res => {
-          console.log(res)
+    login(form.username, form.password)
+      .then(res => {
+        console.log(res.data.data);
+
+        // 提示成功 x
+        ElNotification({
+          message: "登录成功",
+          type: 'success',
+          duration: 3000
         })
-        .catch(err=> {
-          console.log(err.response.data.msg)
+        // 存储token和用户信息 x
+        const cookie = useCookies();
+        cookie.set("admin-token",res.data.data)
+        // 跳转到后台首页 √
+        router.push("/")
+      })
+      .catch(err => {
+        ElNotification({
+          message: err.response.data.msg || "请求失败",
+          type: 'error',
+          duration: 3000
         })
+      })
   })
 }
 </script>
@@ -67,7 +88,7 @@ const onSubmit = () => {
           </el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input v-model="form.password" type="password"  placeholder="请输入密码" show-password>
+          <el-input v-model="form.password" type="password" placeholder="请输入密码" show-password>
             <template #prefix>
               <el-icon>
                 <Lock />
@@ -115,4 +136,5 @@ const onSubmit = () => {
 
 .right .line {
   @apply h-[1px] w-16 bg-gray-200
-}</style>
+}
+</style>
