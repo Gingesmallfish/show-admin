@@ -1,0 +1,17 @@
+import { useCookies } from '@vueuse/integrations/useCookies'
+
+const TokenKey = "admin-token"
+const cookie = useCookies()
+
+// 获取token
+export function getToken() {
+    return cookie.get(TokenKey)
+}
+// 设置token
+export function setToken() {
+    return cookie.set(TokenKey,token)
+}
+// 清楚token
+export function removeToken() {
+    return cookie.remove(TokenKey)
+}

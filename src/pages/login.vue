@@ -2,8 +2,9 @@
 import { ref, reactive } from 'vue'
 import { login, getinfo } from "@/api/manager";
 import { useRouter } from "vue-router";
-import { ElNotification } from 'element-plus'
-import { useCookies } from '@vueuse/integrations/useCookies'
+import { toast } from "@/composables/util";
+import { getToken }from "@/composables/auth"
+
 
 const router = useRouter();
 
@@ -30,25 +31,24 @@ const rules = {
   ]
 }
 const formRef = ref(null)
+const loading = ref(false)
 const onSubmit = () => {
   formRef.value.validate((valid) => {
     if (!valid) {
       return false
     }
+
+    loading.value = true
+
     login(form.username, form.password)
       .then(res => {
         console.log(res);
 
-        // 提示成功 x
-        ElNotification({
-          message: "登录成功",
-          type: 'success',
-          duration: 3000
-        })
+        // 提示成功 √
+        toast("登录成功")
 
         // 存储token和用户信息 √
-        const cookie = useCookies();
-        cookie.set("admin-token",res.token)
+        getToken(res.token);
 
         // 获取用户相关信息
         getinfo().then(resonw => {
@@ -58,6 +58,9 @@ const onSubmit = () => {
         // 跳转到后台首页 √
         router.push("/")
       })
+        .finally(() => {
+          loading.value = false
+        })
   })
 }
 </script>
@@ -97,7 +100,7 @@ const onSubmit = () => {
           </el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" round color="#626aef" class="w-[250px]" @click="onSubmit">登 录</el-button>
+          <el-button type="primary" round color="#626aef" class="w-[250px]" @click="onSubmit" :loading="loading">登 录</el-button>
         </el-form-item>
       </el-form>
     </el-col>
