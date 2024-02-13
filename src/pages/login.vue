@@ -33,33 +33,33 @@ const formRef = ref(null)
 const loading = ref(false)
 // 监听回车事件
 const onSubmit = () => {
-  formRef.value.validate((valid)=>{
-    if(!valid){
+  formRef.value.validate((valid) => {
+    if (!valid) {
       return false
     }
     loading.value = true
 
-    store.dispatch("login",form).then(res=>{
+    store.dispatch("login", form).then(res => {
       toast("登录成功")
       router.push("/")
-    }).finally(()=>{
+    }).finally(() => {
       loading.value = false
     })
   })
 }
 
 // 监听回车事件
-function onKeyUp(e){
-  if(e.key === "Enter") onSubmit()
+function onKeyUp(e) {
+  if (e.key === "Enter") onSubmit()
 }
 
 // 添加键盘监听
-onMounted(()=>{
-  document.addEventListener("keyup",onKeyUp)
+onMounted(() => {
+  document.addEventListener("keyup", onKeyUp)
 })
 // 移除键盘监听
-onBeforeUnmount(()=>{
-  document.removeEventListener("keyup",onKeyUp)
+onBeforeUnmount(() => {
+  document.removeEventListener("keyup", onKeyUp)
 })
 </script>
 
@@ -98,7 +98,8 @@ onBeforeUnmount(()=>{
           </el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" round color="#626aef" class="w-[250px]" @click="onSubmit" :loading="loading">登 录</el-button>
+          <el-button type="primary" round color="#626aef" class="w-[250px]" @click="onSubmit" :loading="loading">登
+            录</el-button>
         </el-form-item>
       </el-form>
     </el-col>
